@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -6,8 +5,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      <Navbar />
-
       {/* Hero */}
       <main className="flex flex-1 flex-col items-center justify-center px-6 text-center pt-20">
         <h1 className="max-w-sm text-4xl font-bold leading-tight tracking-tight text-foreground">
