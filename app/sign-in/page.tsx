@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "@/lib/auth/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,12 +17,29 @@ import {
 } from "@/components/ui/card";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: wire up better-auth sign-in
+    setError(null);
+    setLoading(true);
+
+    const { error } = await signIn.email({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setError(error.message ?? "Something went wrong. Please try again.");
+    } else {
+      router.push("/dashboard");
+    }
   }
 
   return (
@@ -44,6 +63,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -55,14 +75,20 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
 
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+
             <Button
               type="submit"
-              className="mt-2 w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white"
+              disabled={loading}
+              className="mt-2 w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white disabled:opacity-60"
             >
-              Sign In
+              {loading ? "Signing in…" : "Sign In"}
             </Button>
           </form>
         </CardContent>
