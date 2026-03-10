@@ -1,7 +1,7 @@
 
 
 import connectDB from "@/lib/db"
-import { Board, Column, JobApplication } from "@/lib/models"
+import { Board, JobApplication } from "@/lib/models"
 import type {
 	Board as BoardType,
 	Column as ColumnType,
@@ -18,24 +18,36 @@ export async function getBoardData(userId: string): Promise<BoardData | null> {
 
 	await connectDB()
 
-	const board = await Board.findOne({ userId }).lean()
+	const board = await Board.findOne({ userId })
+		.populate({
+			path: "columns",
+			options: { sort: { order: 1 } },
+		})
+		.lean()
 
 	if (!board) return null
 
-	const columns = await Column.find({ boardId: board._id })
-		.sort({ order: 1 })
-		.lean()
+	const populatedColumns =
+		(board.columns as unknown as Array<{
+			_id: { toString(): string }
+			name: string
+			boardId: { toString(): string }
+			order: number
+			jobApplications: { toString(): string }[]
+			createdAt: Date
+			updatedAt: Date
+		}>) || []
+	const columnIds = populatedColumns.map((c) => c._id)
 
-	const columnIds = columns.map((c) => c._id)
 	const jobs = await JobApplication.find({ columnId: { $in: columnIds } })
 		.sort({ order: 1 })
 		.lean()
 
-	const columnsWithJobs = columns.map((col) => ({
+	const columnsWithJobs = populatedColumns.map((col) => ({
 		...col,
 		_id: col._id.toString(),
 		boardId: col.boardId.toString(),
-		jobApplications: col.jobApplications.map((id: { toString(): string }) =>
+		jobApplications: (col.jobApplications || []).map((id: { toString(): string }) =>
 			id.toString(),
 		),
 		createdAt: col.createdAt.toISOString(),
@@ -57,7 +69,7 @@ export async function getBoardData(userId: string): Promise<BoardData | null> {
 		board: {
 			...board,
 			_id: board._id.toString(),
-			columns: board.columns.map((id: { toString(): string }) => id.toString()),
+			columns: populatedColumns.map((c) => c._id.toString()),
 			createdAt: board.createdAt.toISOString(),
 			updatedAt: board.updatedAt.toISOString(),
 		},

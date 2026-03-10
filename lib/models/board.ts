@@ -20,10 +20,12 @@ const BoardSchema = new Schema<IBoard>(
 			required: true,
 			index: true,
 		},
-		columns: {
-			type: [Schema.Types.ObjectId],
-			ref: "Column",
-		},
+		columns: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "Column",
+			},
+		],
 	},
 	{ timestamps: true },
 )
