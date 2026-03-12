@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { createJobApplication } from "@/lib/actions/job-applications"
+import { createJobFormSchema } from "@/lib/validations"
 import {
 	Dialog,
 	DialogContent,
@@ -17,19 +18,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
-const formSchema = z.object({
-	company: z.string().min(1, "Company is required"),
-	position: z.string().min(1, "Position is required"),
-	location: z.string().optional(),
-	salary: z.string().optional(),
-	jobUrl: z.string().url("Invalid URL").or(z.literal("")).optional(),
-	appliedDate: z.string().optional(),
-	notes: z.string().optional(),
-	description: z.string().optional(),
-	tags: z.string().optional(),
-})
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof createJobFormSchema>
 
 interface CreateJobDialogProps {
 	open: boolean
@@ -54,7 +44,7 @@ export default function CreateJobDialog({
 		reset,
 		formState: { errors, isSubmitting },
 	} = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+		resolver: zodResolver(createJobFormSchema),
 		defaultValues: {
 			company: "",
 			position: "",

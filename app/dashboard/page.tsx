@@ -6,7 +6,7 @@ import { getSession } from "@/lib/auth/auth"
 export default async function DashboardPage() {
 	const session = await getSession()
 	
-	const data = await getBoardData(session?.user.id ?? '')
+	const board = await getBoardData(session?.user.id ?? '')
 
 	return (
 		<div className="flex flex-col h-[calc(100vh-65px)] pt-[65px]">
@@ -15,20 +15,20 @@ export default async function DashboardPage() {
 				<div className="flex items-center gap-2">
 					<LayoutDashboard className="size-5 text-primary" />
 					<h1 className="font-semibold text-lg">
-						{data?.board.name ?? "My Board"}
+						{board?.board.name ?? "My Board"}
 					</h1>
 				</div>
 				<p className="text-sm text-muted-foreground">
-					{data
-						? `${data.columns.reduce((acc, col) => acc + col.jobs.length, 0)} applications`
+					{board
+						? `${board.columns.reduce((acc, col) => acc + col.jobs.length, 0)} applications`
 						: ""}
 				</p>
 			</div>
 
 			{/* Board */}
 			<div className="flex-1 overflow-hidden px-6 py-4">
-				{data ? (
-					<KanbanBoard data={data} />
+				{board ? (
+					<KanbanBoard board={board} />
 				) : (
 					<div className="flex items-center justify-center h-full text-muted-foreground">
 						<p>No board found.</p>

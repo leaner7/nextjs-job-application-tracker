@@ -7,6 +7,7 @@ import type { BoardData } from "@/lib/dal/board"
 import type { JobApplication } from "@/lib/models/models.types"
 import CreateJobDialog from "@/components/create-job-dialog"
 import JobApplicationCard from "@/components/job-application-card"
+import { useBoard } from "@/lib/hooks/useBoard"
 
 const STATUS_COLORS: Record<string, string> = {
 	wishlist: "bg-slate-100 text-slate-700 border-slate-200",
@@ -28,7 +29,9 @@ function SortableJobCard({ job, columns }: { job: JobApplication; columns: { _id
 	return <JobApplicationCard job={job} columns={columns} />
 }
 
-export default function KanbanBoard({ data }: { data: BoardData }) {
+export default function KanbanBoard({ board }: { board: BoardData }) {
+	const { columns, moveJob } = useBoard(board)
+
 	const [dialogColumn, setDialogColumn] = useState<{
 		id: string
 		name: string
@@ -37,7 +40,7 @@ export default function KanbanBoard({ data }: { data: BoardData }) {
 	return (
 		<>
 			<div className="flex gap-4 h-full overflow-x-auto pb-4">
-				{data.columns.map((column) => {
+				{columns.map((column) => {
 					const columnKey = column.name.toLowerCase()
 					const accentClass =
 						COLUMN_ACCENT[columnKey] ?? "border-t-gray-300"
@@ -84,7 +87,7 @@ export default function KanbanBoard({ data }: { data: BoardData }) {
 									</div>
 								) : (
 									column.jobs.map((job) => (
-										<SortableJobCard key={job._id} job={job} columns={data.columns} />
+										<SortableJobCard key={job._id} job={job} columns={board.columns} />
 									))
 								)}
 							</div>
@@ -99,7 +102,7 @@ export default function KanbanBoard({ data }: { data: BoardData }) {
 					if (!open) setDialogColumn(null)
 				}}
 				columnId={dialogColumn?.id ?? ""}
-				boardId={data.board._id}
+				boardId={board.board._id}
 				columnName={dialogColumn?.name ?? ""}
 			/>
 		</>

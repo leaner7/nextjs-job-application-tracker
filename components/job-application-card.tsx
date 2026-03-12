@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { JobApplication } from "@/lib/models/models.types"
+import { updateJobApplication } from "@/lib/actions/job-applications"
 
 interface JobApplicationCardProps {
 	job: JobApplication
@@ -22,6 +23,16 @@ export default function JobApplicationCard({
 	columns,
 }: JobApplicationCardProps) {
 	const otherColumns = columns.filter((col) => col._id !== job.columnId)
+
+	async function handleMove(newColumnId: string) {
+		try {
+			const result = await updateJobApplication(job._id, {
+				columnId: newColumnId
+			})
+		} catch (error) {
+			console.error(error)
+		}
+	}
 
 	return (
 		<Card className="shadow-sm hover:shadow-md transition-shadow group py-3">
@@ -55,7 +66,7 @@ export default function JobApplicationCard({
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						{otherColumns.map((col) => (
-							<DropdownMenuItem key={col._id} className="cursor-pointer">
+							<DropdownMenuItem key={col._id} className="cursor-pointer" onClick={() => handleMove(col._id)}>
 								Move to {col.name}
 							</DropdownMenuItem>
 						))}
