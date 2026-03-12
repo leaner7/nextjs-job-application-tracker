@@ -9,6 +9,15 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+	AlertDialog,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { useState } from "react"
 import type { JobApplication } from "@/lib/models/models.types"
 import { updateJobApplication, deleteJobApplication } from "@/lib/actions/job-applications"
@@ -24,12 +33,13 @@ export default function JobApplicationCard({
 	columns,
 }: JobApplicationCardProps) {
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 	const [isDeleting, setIsDeleting] = useState(false)
 	const otherColumns = columns.filter((col) => col._id !== job.columnId)
 
 	async function handleMove(newColumnId: string) {
 		try {
-			const result = await updateJobApplication(job._id, {
+			await updateJobApplication(job._id, {
 				columnId: newColumnId
 			})
 		} catch (error) {
@@ -38,7 +48,6 @@ export default function JobApplicationCard({
 	}
 
 	async function handleDelete() {
-		if (!window.confirm("Are you sure you want to delete this job application? This action cannot be undone.")) return
 		try {
 			setIsDeleting(true)
 			await deleteJobApplication(job._id)
@@ -46,10 +55,12 @@ export default function JobApplicationCard({
 			console.error(error)
 		} finally {
 			setIsDeleting(false)
+			setIsDeleteDialogOpen(false)
 		}
 	}
 
 	return (
+		<>
 		<Card className="shadow-sm hover:shadow-md transition-shadow group py-3">
 			<CardContent className="px-4">
 			<div className="flex items-start justify-between gap-2 mb-2">
@@ -81,11 +92,10 @@ export default function JobApplicationCard({
 						</DropdownMenuItem>
 						<DropdownMenuItem 
 							className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10" 
-							onClick={handleDelete}
-							disabled={isDeleting}
+							onClick={() => setIsDeleteDialogOpen(true)}
 						>
 							<Trash2 className="size-3" />
-							{isDeleting ? "Deleting..." : "Delete"}
+							Delete
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						{otherColumns.map((col) => (
@@ -144,6 +154,31 @@ export default function JobApplicationCard({
 					job={job}
 				/>
 			)}
+
+			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete the job application for <strong>{job.position}</strong> at <strong>{job.company}</strong>.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<Button 
+							variant="destructive" 
+							onClick={(e) => {
+								e.preventDefault();
+								handleDelete();
+							}} 
+							disabled={isDeleting}
+						>
+							{isDeleting ? "Deleting..." : "Delete"}
+						</Button>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</Card>
+		</>
 	)
 }
