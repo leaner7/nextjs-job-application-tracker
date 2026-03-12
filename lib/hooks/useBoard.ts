@@ -57,12 +57,12 @@ export function useBoard(initialBoard?: BoardData) {
 					const items = [...newColumns[activeColumnIndex].jobs]
 					const [reorderedItem] = items.splice(activeIndex, 1)
 					items.splice(overIndex, 0, reorderedItem)
-					
+
 					// Re-assign order locally to avoid flickering
 					items.forEach((item, index) => {
 						item.order = index * 100
 					})
-					
+
 					newColumns[activeColumnIndex].jobs = items
 				} else {
 					// Moving to a different column
@@ -72,12 +72,12 @@ export function useBoard(initialBoard?: BoardData) {
 					)
 					removed.columnId = newColumns[overColumnIndex]._id // Update the local state's representation of columnId
 					newColumns[overColumnIndex].jobs.splice(overIndex, 0, removed)
-					
+
 					// Re-assign order locally in the new column
 					newColumns[overColumnIndex].jobs.forEach((item, index) => {
 						item.order = index * 100
 					})
-					
+
 					// Re-assign order locally in the old column
 					newColumns[activeColumnIndex].jobs.forEach((item, index) => {
 						item.order = index * 100
@@ -103,12 +103,12 @@ export function useBoard(initialBoard?: BoardData) {
 				)
 				removed.columnId = newColumns[overColumnIndex]._id
 				newColumns[overColumnIndex].jobs.push(removed)
-				
+
 				// Re-assign order locally in the new column
 				newColumns[overColumnIndex].jobs.forEach((item, index) => {
 					item.order = index * 100
 				})
-				
+
 				// Re-assign order locally in the old column
 				newColumns[activeColumnIndex].jobs.forEach((item, index) => {
 					item.order = index * 100

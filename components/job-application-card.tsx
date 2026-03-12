@@ -1,4 +1,4 @@
-import { Briefcase, MapPin, DollarSign, MoreVertical, Pencil } from "lucide-react"
+import { Briefcase, MapPin, DollarSign, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -6,13 +6,12 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useState } from "react"
 import type { JobApplication } from "@/lib/models/models.types"
-import { updateJobApplication } from "@/lib/actions/job-applications"
+import { updateJobApplication, deleteJobApplication } from "@/lib/actions/job-applications"
 import EditJobDialog from "./edit-job-dialog"
 
 interface JobApplicationCardProps {
@@ -25,6 +24,7 @@ export default function JobApplicationCard({
 	columns,
 }: JobApplicationCardProps) {
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+	const [isDeleting, setIsDeleting] = useState(false)
 	const otherColumns = columns.filter((col) => col._id !== job.columnId)
 
 	async function handleMove(newColumnId: string) {
@@ -34,6 +34,18 @@ export default function JobApplicationCard({
 			})
 		} catch (error) {
 			console.error(error)
+		}
+	}
+
+	async function handleDelete() {
+		if (!window.confirm("Are you sure you want to delete this job application? This action cannot be undone.")) return
+		try {
+			setIsDeleting(true)
+			await deleteJobApplication(job._id)
+		} catch (error) {
+			console.error(error)
+		} finally {
+			setIsDeleting(false)
 		}
 	}
 
@@ -66,6 +78,14 @@ export default function JobApplicationCard({
 						<DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => setIsEditDialogOpen(true)}>
 							<Pencil className="size-3" />
 							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem 
+							className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10" 
+							onClick={handleDelete}
+							disabled={isDeleting}
+						>
+							<Trash2 className="size-3" />
+							{isDeleting ? "Deleting..." : "Delete"}
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						{otherColumns.map((col) => (
