@@ -10,8 +10,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useState } from "react"
 import type { JobApplication } from "@/lib/models/models.types"
 import { updateJobApplication } from "@/lib/actions/job-applications"
+import EditJobDialog from "./edit-job-dialog"
 
 interface JobApplicationCardProps {
 	job: JobApplication
@@ -22,6 +24,7 @@ export default function JobApplicationCard({
 	job,
 	columns,
 }: JobApplicationCardProps) {
+	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 	const otherColumns = columns.filter((col) => col._id !== job.columnId)
 
 	async function handleMove(newColumnId: string) {
@@ -60,10 +63,10 @@ export default function JobApplicationCard({
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="w-48">
-						<DropdownMenuLabel className="flex items-center gap-2">
+						<DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => setIsEditDialogOpen(true)}>
 							<Pencil className="size-3" />
 							Edit
-						</DropdownMenuLabel>
+						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						{otherColumns.map((col) => (
 							<DropdownMenuItem key={col._id} className="cursor-pointer" onClick={() => handleMove(col._id)}>
@@ -113,6 +116,14 @@ export default function JobApplicationCard({
 				</p>
 			)}
 			</CardContent>
+
+			{isEditDialogOpen && (
+				<EditJobDialog
+					open={isEditDialogOpen}
+					onOpenChange={setIsEditDialogOpen}
+					job={job}
+				/>
+			)}
 		</Card>
 	)
 }
