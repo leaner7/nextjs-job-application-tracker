@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Application Tracker
 
-## Getting Started
+A modern, full-stack Kanban-style job application tracking platform built with Next.js App Router, React, and MongoDB.
 
-First, run the development server:
+## 🚀 Features
+
+- **Kanban Board Interface**: Drag-and-drop functional Kanban board to manage job applications effortlessly, powered by `@dnd-kit`.
+- **Authentication**: Seamless credential-based user authentication using [Better-Auth](https://better-auth.com/).
+- **Database Architecture**: Robust data layer modeling using MongoDB and Mongoose.
+- **Modern UI Stack**: Fully styled using Tailwind CSS and pre-built components from `shadcn/ui`, featuring a sleek and responsive design.
+- **Form Validation**: Type-safe and rigid form schemas strictly enforced using `react-hook-form` and `zod`.
+- **CI/CD Integrated**: Pre-configured with GitHub Actions for automated linting and type-checking, optimized for frictionless deployments on Vercel.
+
+## 🛠 Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org) (App Router, Server Actions)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [MongoDB](https://www.mongodb.com/) & [Mongoose](https://mongoosejs.com/)
+- **Authentication**: [Better-Auth](https://better-auth.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+
+---
+
+## 🏃 Getting Started
+
+### 1. Clone & Install
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/leaner7/nextjs-job-application-tracker.git
+cd nextjs-job-application-tracker
+npm install
+```
+
+### 2. Environment Variables
+Create a `.env.local` file in the root directory by copying the example:
+
+```bash
+cp .env.example .env.local
+```
+
+Update `.env.local` to match your configurations:
+- `MONGODB_URI`: Your MongoDB connection string.
+- `BETTER_AUTH_SECRET`: A secure, random 32-character string.
+- `BETTER_AUTH_URL` & `NEXT_PUBLIC_BETTER_AUTH_URL`: Your site URL (default is `http://localhost:3000`).
+
+### 3. Database Seeding (Optional)
+To insert dummy data into your newly configured database to populate your Kanban board:
+```bash
+npm run seed
+```
+
+### 4. Run Development Server
+Start the Next.js development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚢 Continuous Integration & Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### GitHub Actions
+This repository features a standard CI pipeline (`.github/workflows/ci.yml`). On every push or PR to `main`, the workflow automates:
+- Dependency installation
+- Global Type Checking (`npx tsc --noEmit`)
+- ESLint checks
 
-## Learn More
+### Deploying to Vercel
+1. Log in to [Vercel](https://vercel.com/) and click "Add New Project".
+2. Import this repository from your GitHub account.
+3. Supply your Production Environment Variables (`MONGODB_URI`, `BETTER_AUTH_SECRET`, etc.).
+4. Click **Deploy**. Vercel will automatically track `main` for CD.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/leaner7/nextjs-job-application-tracker/issues).
